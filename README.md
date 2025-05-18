@@ -6,6 +6,8 @@
 
 > A beautiful and modern photo gallery project.
 
+![preview](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExemVnOXBjZ2ZlNzJvY3dubGMxczdid2ZsNDh5bzR1eWszemxnd3Q3cCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MCKs2Xv3BZOW0e6AzC/giphy.gif)
+
 [Online browsing](http://simonaking.com/gallery)
 
 Do you want to install such a cool gallery for your website?
