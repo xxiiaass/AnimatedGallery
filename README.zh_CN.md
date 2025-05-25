@@ -72,6 +72,21 @@ npm run dev
      }
      ```
 
+### 自定义存储选项
+
+`scripts/update.js` 脚本在每次生成预览时会读取图片并生成 `photos.js` 内容。这个文件代表了相册中的所有图片。如果你使用 OSS、已有的图床或其他存储方案，你可以修改该脚本中的图片读取逻辑。
+
+自定义存储的步骤：
+1. 修改 `scripts/update.js` 中的 `processPhotoWithWorker` 函数
+2. 更新图片源路径生成逻辑
+3. 根据需要调整 `package.json` 中的 CDN 配置
+
+自定义存储示例：
+```js
+// 在 processPhotoWithWorker 中修改 src 生成逻辑
+const src = 你的自定义存储URL + photo;
+```
+
 ## 赞助
 开发一个优秀的项目，离不开大量时间和精力的投入。
 

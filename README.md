@@ -76,6 +76,21 @@ npm run dev
      }
      ```
 
+### Custom Storage Options
+
+The `scripts/update.js` script reads images and generates `photos.js` content during each preview generation. This file represents all photos in your gallery. If you're using OSS, an existing image hosting service, or other storage solutions, you can modify the image reading logic in this script.
+
+To use custom storage:
+1. Modify the `processPhotoWithWorker` function in `scripts/update.js`
+2. Update the photo source path generation logic
+3. Adjust the CDN configuration in `package.json` if needed
+
+Example for custom storage:
+```js
+// Modify the src generation in processPhotoWithWorker
+const src = YOUR_CUSTOM_STORAGE_URL + photo;
+```
+
 ## Sponsor
 I spent a lot of time and energy to develop this project.
 
