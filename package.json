@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "private": true,
   "config": {
-    "cdn": "https://cdn.jsdelivr.net/gh/SimonAKing/AnimatedGallery/photos/"
+    "cdn": "https://kevinxia-test-hpeoaefv.zh-cn.edgeone.run/photos/"
   },
   "scripts": {
     "photos": "node scripts/update.js",
