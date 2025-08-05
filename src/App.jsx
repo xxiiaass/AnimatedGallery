@@ -25,7 +25,7 @@ function App() {
   };
 
   console.log(getPathInfo())
-  let photosFilter = photos.filter(photo => photo.src.indexOf("./photos/"+getPathInfo()) === 0);
+  let photosFilter = photos.filter(photo => photo.src.indexOf("/photos/"+getPathInfo()) !== -1);
   console.log(photos)
   console.log(photosFilter)
 
