@@ -74,7 +74,9 @@ const RANGE = 120;
 
 
 const processPhotoWithWorker = (photo) => {
+  console.log(photo)
   return new Promise((resolve, reject) => {
+  console.log("begin ", photo)
     const photoPath = photosDir + photo;
     const cacheKey = photo;
 
@@ -129,6 +131,7 @@ const processPhotoWithWorker = (photo) => {
             hash,
           };
           resolve(photoData);
+          console.log("done ", photo)
         } catch (error) {
           reject(error);
         }
@@ -204,7 +207,7 @@ const getAllFiles = (dir, base = '') => {
     
     if (ignoreFileList.some(ignore => entry.name.includes(ignore))) {
       continue;
-    }
+    } 
     
     if (entry.isDirectory()) {
       files = [...files, ...getAllFiles(dir, relativePath)];
@@ -290,9 +293,7 @@ const __minifyPhotos = async () => {
 const main = async () => {
   await minifyPhotos();
 
-  const photos = fs
-    .readdirSync(photosDir)
-    .filter((photo) => ignoreFileList.every((f) => !photo.includes(f)))
+  const photos = getAllFiles(photosDir)
     .filter((f, i, arr) => arr.indexOf(f) === i);
   photos.sort((a, b) => {
     try {
