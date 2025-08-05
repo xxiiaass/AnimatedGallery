@@ -14,14 +14,13 @@ function App() {
     const url = new URL(window.location.href);
     
     // 选项1: 使用路径部分（如 /nature）
-    const pathParts = url.pathname.split('/').filter(p => p);
-    const pathCategory = pathParts.length > 0 ? pathParts[pathParts.length - 1] : null;
+    const pathParts = url.pathname.split('/').filter(p => p).join("/");
     
     // 选项2: 使用查询参数（如 ?category=nature）
     const queryCategory = url.searchParams.get('category');
     
     // 返回优先级：路径参数 > 查询参数 > 默认值
-    return pathCategory || queryCategory || '';
+    return pathParts || queryCategory || '';
   };
 
   console.log(getPathInfo())
