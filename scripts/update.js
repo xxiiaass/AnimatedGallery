@@ -60,7 +60,7 @@ if (!isMainThread) {
 const { NODE_ENV: ENV } = process.env;
 
 const packageJson = require('../package.json');
-const CDN = packageJson.config.cdn;
+const CDN = process.env.CDN || packageJson.config.cdn;
 const photosDir = './public/photos/';
 const photosLocalDir = './photos/';
 const photoJS = './src/photos.js';
