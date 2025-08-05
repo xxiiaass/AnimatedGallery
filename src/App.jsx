@@ -26,6 +26,8 @@ function App() {
 
   console.log(getPathInfo())
   let photosFilter = photos.filter(photo => photo.src.indexOf("./photos/"+getPathInfo()) === 0);
+  console.log(photos)
+  console.log(photosFilter)
 
   const openLightbox = useCallback((_, { __, index }) => {
     setCurrentPhoto(index);
