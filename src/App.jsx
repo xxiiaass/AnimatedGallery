@@ -9,6 +9,23 @@ import { lazyLoad } from './utils';
 function App() {
   const [currentPhoto, setCurrentPhoto] = useState(0);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
+  const getPathInfo = () => {
+    // 获取完整URL
+    const url = new URL(window.location.href);
+    
+    // 选项1: 使用路径部分（如 /nature）
+    const pathParts = url.pathname.split('/').filter(p => p);
+    const pathCategory = pathParts.length > 0 ? pathParts[pathParts.length - 1] : null;
+    
+    // 选项2: 使用查询参数（如 ?category=nature）
+    const queryCategory = url.searchParams.get('category');
+    
+    // 返回优先级：路径参数 > 查询参数 > 默认值
+    return pathCategory || queryCategory || '';
+  };
+
+  console.log(getPathInfo())
+  let photosFilter = photos.filter(photo => photo.src.indexOf("./photos/"+getPathInfo()) === 0);
 
   const openLightbox = useCallback((_, { __, index }) => {
     setCurrentPhoto(index);
@@ -22,9 +39,9 @@ function App() {
 
   return (
     <>
-      <Gallery photos={photos} onLoad={lazyLoad} onClick={openLightbox} />
+      <Gallery photos={photosFilter} onLoad={lazyLoad} onClick={openLightbox} />
       <Lightbox
-        photos={photos}
+        photos={photosFilter}
         viewerIsOpen={viewerIsOpen}
         currentPhoto={currentPhoto}
         closeLightbox={closeLightbox}
