@@ -12,6 +12,7 @@ const os = require('os');
 const path = require('path');
 const del = require('del');
 
+
 const CACHE_FILE = './blurhash_cache.json';
 
 let hashCache = {};
@@ -69,6 +70,8 @@ const ignoreFileList = ['.DS_Store', 'hidden'];
 let script = `/* eslint-disable no-template-curly-in-string */
 export default [\n`;
 const RANGE = 120;
+
+
 
 const processPhotoWithWorker = (photo) => {
   return new Promise((resolve, reject) => {
@@ -145,6 +148,25 @@ const formatProgressBar = (current, total, length = 30) => {
   return `[${bar}] ${current}/${total} (${percentage}%)`;
 };
 
+// 压缩单个文件（保持目录结构）
+const minifyFile = async (sourcePath, relativePath) => {
+  const destination = path.join(photosDir, relativePath);
+  const ext = path.extname(sourcePath).toLowerCase();
+  
+  // 确保目标目录存在
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+
+  if (ext === '.jpg' || ext === '.jpeg') {
+    await sharp(sourcePath)
+      .jpeg({ quality: 80 })
+      .toFile(destination);
+  } else if (ext === '.png') {
+    await sharp(sourcePath)
+      .png({ quality: 80 })
+      .toFile(destination);
+  }
+};
+
 const minify = async (needCompressPhotos, destination) => {
   try {
     await Promise.all(
@@ -171,7 +193,70 @@ const minify = async (needCompressPhotos, destination) => {
   }
 };
 
+
+// 递归获取目录下所有文件路径（保留相对路径）
+const getAllFiles = (dir, base = '') => {
+  const entries = fs.readdirSync(path.join(dir, base), { withFileTypes: true });
+  let files = [];
+  
+  for (const entry of entries) {
+    const relativePath = path.join(base, entry.name);
+    
+    if (ignoreFileList.some(ignore => entry.name.includes(ignore))) {
+      continue;
+    }
+    
+    if (entry.isDirectory()) {
+      files = [...files, ...getAllFiles(dir, relativePath)];
+    } else {
+      files.push(relativePath);
+    }
+  }
+  return files;
+};
+
+// 主压缩函数
 const minifyPhotos = async () => {
+  // 获取所有文件（保留相对路径）
+  const publicPhotos = getAllFiles(photosDir);
+  const localPhotos = getAllFiles(photosLocalDir);
+  
+  // 删除目标目录多余文件
+  const needDeletedPhotos = publicPhotos.filter(
+    photo => !localPhotos.includes(photo)
+  );
+  
+  if (needDeletedPhotos.length) {
+    const fullPaths = needDeletedPhotos.map(photo => path.join(photosDir, photo));
+    await del(fullPaths);
+    console.log(`Deleted ${needDeletedPhotos.length} files`);
+  }
+
+  // 压缩新增文件
+  const needCompressPhotos = localPhotos.filter(
+    photo => !publicPhotos.includes(photo)
+  );
+  
+  if (!needCompressPhotos.length) {
+    console.log('No new files to compress');
+    return;
+  }
+  
+  console.log(`Compressing ${needCompressPhotos.length} files...`);
+  
+  // 并行压缩所有文件（保留目录结构）
+  await Promise.all(
+    needCompressPhotos.map(async (relativePath) => {
+      const sourcePath = path.join(photosLocalDir, relativePath);
+      console.log("sourcePath:", sourcePath, "  relativePath:", relativePath)
+      await minifyFile(sourcePath, relativePath);
+    })
+  );
+  
+  console.log('Images optimized with folder structure preserved');
+};
+
+const __minifyPhotos = async () => {
   const publicPhotos = fs.readdirSync(photosDir);
   const photos = fs
     .readdirSync(photosLocalDir)
